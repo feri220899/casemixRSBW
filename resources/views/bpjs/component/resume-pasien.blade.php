@@ -118,12 +118,17 @@
                                     alt="barcode" width="80px" height="75px" />
                             </div>
                             {{-- {{$getResume->dokter_fiso}} --}}
-                            {{ $getResume->dokter_fisio_dokter->nama ?? $getResume->dokter_fisio_petugas->nama ?? '-' }}
+                            {{ $getResume->dokter_fisio_dokter->nama ?? ($getResume->dokter_fisio_petugas->nama ?? '-') }}
                         </td>
                     </tr>
                 </table>
             </div>
         </div>
+        @if ($resume_ralan)
+        {{-- KODE BERKAS REUSUME RALAN --}}
+        @else
+        {{-- KODE BERKAS FISIO --}}
+        @endif
     @else
         @if ($statusLanjut->status_lanjut == 'Ranap')
             {{-- BERKAS RESUME RANAP --}}

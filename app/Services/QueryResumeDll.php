@@ -329,8 +329,13 @@ class QueryResumeDll
                 'resume_pasien.prosedur_sekunder3',
                 'resume_pasien.kd_prosedur_sekunder3',
                 'resume_pasien.kondisi_pulang',
+<<<<<<< HEAD
                 'resume_pasien.obat_pulang',
                 'tgl_perawatan as null'
+=======
+                'resume_pasien.obat_pulang'
+
+>>>>>>> rsbwnew/main
             )
             ->join('reg_periksa', 'resume_pasien.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')

@@ -42,6 +42,7 @@ use App\Http\Controllers\Keperawatan\LaporanLogBook;
 use App\Http\Controllers\Laporan\BayarPiutangKhanza;
 use App\Http\Controllers\Regperiksa\AnjunganMandiri;
 use App\Http\Controllers\DetailTindakan\OperasiAndVK;
+use App\Http\Controllers\DetailTindakan\OperasiAndVKKSO;
 use App\Http\Controllers\DetailTindakanBulanan\OperasiAndVK1;
 use App\Http\Controllers\DetailTindakan\RanapDokter2;
 use App\Http\Controllers\DetailTindakan\RanapDokter3;
@@ -92,7 +93,30 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Http\Controllers\AI\AIChat;
 use App\Http\Controllers\AI\AIChatController;
+use App\Http\Controllers\PasienKamarInap\RawatInap;
+use App\Http\Controllers\PasienKamarInap\InfoKamarInap;
 use App\Http\Controllers\Regperiksa\RegPeriksaBillingController;
+use App\Http\Livewire\AntrianFarmasi\PanggilAntrianFarmasi;
+use App\Http\Controllers\PasienKamarInap\SirsBridgingController;
+use App\Http\Controllers\PasienKamarInap\SdmController;
+use App\Http\Controllers\Regperiksa\BpjsMJKN;
+// use App\Http\Controllers\PasienKamarInap\DataInventaris;
+use App\Http\Controllers\PasienKamarInap\DataInventaris;
+use App\Http\Controllers\PasienKamarInap\Laboratorium;
+use App\Http\Controllers\BriggingBpjs\Faceid;
+use App\Http\Controllers\SuratBiometrik\BiometrikRajal;
+use App\Http\Controllers\SuratBiometrik\Formulir\FormulirBiometrikRajal;
+use App\Http\Controllers\SuratBiometrik\BiometrikRanap;
+use App\Http\Controllers\SuratBiometrik\Formulir\FormulirBiometrikRanap;
+use App\Http\Controllers\SuratBiometrik\Formulir\InputSepBiometrikRajal;
+use App\Http\Controllers\SuratBiometrik\Formulir\InputSepBiometrikRanap;
+use App\Http\Controllers\SuratBiometrik\Formulir\Sep_TTD;
+
+
+
+
+
+
 
 
 /*
@@ -167,7 +191,9 @@ Route::group(['middleware' => 'default'], function () {
         Route::get('/cari-piutang-ralan', [PiutangRalan::class, 'CariPiutangRalan']);
         Route::get('/cari-piutang-ranap', [PiutangRanap::class, 'CariPiutangRanap']);
         Route::get('/cari-bayar-piutang', [BayarPiutang::class, 'CariBayarPiutang']);
-        Route::get('/bayar-piutang-khanza', [BayarPiutangKhanza::class, 'BayarPiutangKhanza']);
+        // Route::get('/bayar-piutang-khanza', [BayarPiutangKhanza::class, 'BayarPiutangKhanza']);
+        Route::get('/bayar-piutang-khanza', [BayarPiutangKhanza::class, 'BayarPiutangKhanza'])
+        ->name('bayar.piutang.khanza');
         Route::get('/bayar-piutang-karyawan', [BayarPiutangKaryawan::class, 'bayarPiutangKaryawan']);
         Route::get('/cari-cob-bayar-piutang', [CobBayarPiutang::class, 'CobBayarPiutang']);
         Route::get('/cari-bayar-umum', [BayarUmum::class, 'CariBayarUmum']);
@@ -185,6 +211,7 @@ Route::group(['middleware' => 'default'], function () {
         Route::get('/ralan-dokter-paramedis2', [RalanDokterParamedis2::class, 'RalanDokterParamedis2']);
         Route::get('/operasi-and-vk', [OperasiAndVK::class, 'OperasiAndVK']);
         Route::get('/operasi-and-vk1', [OperasiAndVK1::class, 'OperasiAndVK1']);
+        Route::get('/operasi-and-vk-kso', [OperasiAndVKKSO::class, 'OperasiAndVKKSO']);
         Route::get('/ranap-dokter', [RanapDokter::class, 'RanapDokter']);
         Route::get('/ranap-dokter4', [RanapDokter4::class, 'RanapDokter4']);
         Route::get('/ranap-dokter2', [RanapDokter2::class, 'RanapDokter2']);
@@ -246,18 +273,25 @@ Route::group(['middleware' => 'default'], function () {
         Route::get('/tabulasi-igd', [TabulasiIGD::class, 'TabulasiIGD']);
 
         //AntrianFarmasi
-
         Route::get('/antrian-farmasi', [AntrianFarmasiController::class, 'index'])->name('antrian-farmasi.index');
+        Route::get('/display-farmasi', [DisplayController::class, 'index'])->name('display-farmasi');
+
+        //PasienKamarInap
+        Route::get('/rawat-inap', [RawatInap::class, 'RawatInap']);
+        Route::get('/infokamarinap', [InfoKamarInap::class, 'InfoKamarInap']);
+        Route::get('/kirim-rawat-inap', [SirsBridgingController::class, 'kirimRawatInap']);
+        Route::get('/sdm', [SdmController::class, 'ambilDataSdm']);
+
+
+        //tes
+        Route::get('/antrian-farmasi/panggil', [\App\Http\Controllers\AntrianFarmasi\AntrianFarmasiController::class, 'panggil'])->name('antrian-farmasi.panggil');
+        // Route::get('/antrian-farmasi/panggil', [AntrianFarmasiController::class, 'panggil']);
+        Route::get('/pharmacy-display', App\Http\Livewire\AntrianFarmasi\Farmasi::class)->name('antrian-farmasi.display');
+        Route::get('/antrian-farmasi/call', PanggilAntrianFarmasi::class)->name('antrian-farmasi.call');
         Route::post('/antrian-farmasi/ambil', [AntrianFarmasiController::class, 'ambilAntrian'])->name('antrian-farmasi.ambilAntrian');
         Route::patch('/antrian-farmasi/update/{id}', [AntrianFarmasiController::class, 'updateStatus'])->name('antrian-farmasi.updateStatus');
         Route::get('/antrian-farmasi/pasien/{no_rkm_medis}', [AntrianFarmasiController::class, 'getPasien'])->name('antrian-farmasi.getPasien');
         Route::get('/antrian-farmasi/cetak/{nomorAntrian}', [AntrianFarmasiController::class, 'cetakAntrian'])->name('antrian-farmasi.cetak');
-
-        //tess
-        Route::get('/display-farmasi', [PanggilanAntrianController::class, 'panggilanDisplay'])->name('antrian.view'); //tampilan farmasi
-        Route::post('/antrian-farmasi/panggil', [PanggilanAntrianController::class, 'panggilAntrian'])->name('antrian-farmasi.antrian');
-
-
 
         //REGPERIKSA
         // Route::get('/reg-periksa', [RegPeriksa::class, 'regperiksa']);
@@ -273,6 +307,82 @@ Route::group(['middleware' => 'default'], function () {
         Route::get('/regperiksabilling', [RegPeriksaBillingController::class, 'regperiksabilling'])->name('regperiksabilling.index1');
         Route::post('/update-status', [RegPeriksaBillingController::class, 'updateStatus'])->name('updateStatus');
         Route::get('/regperiksabilling/detail/{no_rkm_medis}', [RegPeriksaBillingController::class, 'showDetailPasien'])->name('regperiksabilling.detail');
+        Route::post('/regperiksabilling/update-status', [RegPeriksaBillingController::class, 'updateStatus'])->name('regperiksabilling.update-status');
+        Route::post('/update-bulk-status', [RegPeriksaBillingController::class, 'updateBulkStatus'])->name('updateBulkStatus');
+        Route::get('/get-logs', [RegPeriksaBillingController::class, 'getLogs'])->name('getLogs');
+        Route::post('/log-activity', [RegPeriksaBillingController::class, 'ajaxLogActivity'])->name('log.activity');
+
+        Route::get('/bpjs/kirim-antrean', [BpjsMJKN::class, 'kirimAntreanBPJS']);
+        Route::get('/bpjs/antrean/{no_rkm_medis}', [BpjsMJKN::class, 'kirimAntreanBPJS']);
+        // Route::get('/inventaris-barang', [DataInventaris::class, 'index']);
+
+
+        Route::get('/inventaris-barang', [DataInventaris::class, 'index']);
+        Route::get('/laboratorium', [Laboratorium::class, 'index'])->name('laboratorium.index');
+
+
+        // FACEID
+        Route::get('/faceid/frista', [Faceid::class, 'frista'])->name('faceid.frista');
+
+        // BIOMETRIK RALAN
+        Route::prefix('biometrik/rajal')->name('biometrik.rajal.')->group(function () {
+            Route::get('/', [BiometrikRajal::class, 'index'])->name('index');
+            Route::get('/cari', [BiometrikRajal::class, 'cariPasien'])->name('cari');
+            Route::get('/detail/{id}', [BiometrikRajal::class, 'detail'])->name('detail');
+            Route::post('/simpan', [BiometrikRajal::class, 'simpan'])->name('simpan');
+        });
+        Route::prefix('formulir/biometrik/rajal')->name('formulir.biometrik.rajal.')->group(function () {
+            // Form cari pasien
+            Route::get('/', [FormulirBiometrikRajal::class, 'create'])->name('create');
+
+            // Simpan & tampilkan surat
+            Route::post('/store', [FormulirBiometrikRajal::class, 'store'])->name('store');
+        });
+        Route::get('/biometrik/rajal/print/{id}', [BiometrikRajal::class, 'print'])
+            ->where('id', '.*') // biar bisa terima slash
+            ->name('biometrik.rajal.print');
+
+        // BIOMETRIK RANAP
+        Route::prefix('biometrik/ranap')->name('biometrik.ranap.')->group(function () {
+            Route::get('/', [BiometrikRanap::class, 'index'])->name('index');
+            Route::get('/cari', [BiometrikRanap::class, 'cariPasien'])->name('cari');
+            Route::get('/detail/{id}', [BiometrikRanap::class, 'detail'])->name('detail');
+            Route::post('/simpan', [BiometrikRanap::class, 'simpan'])->name('simpan');
+            Route::get('/print/{id}', [BiometrikRanap::class, 'print'])
+                ->where('id', '.*') // biar bisa terima slash
+                ->name('print');
+        });
+
+        Route::prefix('formulir/biometrik/ranap')->name('formulir.biometrik.ranap.')->group(function () {
+            Route::get('/', [FormulirBiometrikRanap::class, 'create'])->name('create');
+            Route::post('/store', [FormulirBiometrikRanap::class, 'store'])->name('store');
+        });
+
+        //BIOMETRIKINPUTSEPRAJAL
+
+        Route::prefix('sepbiometrik/rajal')->name('biometrik.rajal.')->group(function () {
+            Route::get('/input', [InputSepBiometrikRajal::class, 'create'])->name('create');
+            Route::post('/store', [InputSepBiometrikRajal::class, 'store'])->name('store');
+            Route::get('/listsuratrj', [InputSepBiometrikRajal::class, 'listSuratRj'])->name('listSuratRj');
+            Route::get('biometrik/rajal/print/{id}', [InputSepBiometrikRajal::class, 'print'])
+                ->name('biometrik.rajal.print');
+        });
+
+        //BIOMETRIKINPUTSEPRANAP
+
+        Route::prefix('sepbiometrik/ranap')->name('biometrik.ranap.')->group(function () {
+            Route::get('/input', [InputSepBiometrikRanap::class, 'create'])->name('create');
+            Route::post('/store', [InputSepBiometrikRanap::class, 'store'])->name('store');
+            Route::get('/listsuratri', [InputSepBiometrikRanap::class, 'listSuratRi'])->name('listSuratRi');
+            // Route::get('/print/{id}', [InputSepBiometrikRanap::class, 'print'])->name('print');
+            Route::get('sepbiometrik/ranap/print/{id}', [InputSepBiometrikRanap::class, 'print'])
+                ->name('biometrik.ranap.print');
+        });
+
+        // Sep TTD
+
+            Route::get('/sep/ttd/{no_sep}', [Sep_TTD::class, 'form'])->name('sep.formTtd');
+            Route::post('/sep/ttd', [Sep_TTD::class, 'simpan'])->name('sep.simpanTtd');
 
 
 

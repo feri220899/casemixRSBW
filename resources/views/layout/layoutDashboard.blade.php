@@ -21,6 +21,12 @@
     <script src="/js/plotly-latest.min.js"></script>
     <script src="/plugins/jquery/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+
 
     {{-- DUALIS --}}
     <link rel="stylesheet" href="/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
@@ -279,6 +285,14 @@
                                     <a href="{{ url('/operasi-and-vk') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Operasi & VK</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('/operasi-and-vk-kso') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Operasi & VK (KSO)</p>
                                     </a>
                                 </li>
                             </ul>
@@ -904,6 +918,119 @@
                                 </li>
                             </ul>
                         </li>
+
+                        {{-- Pasien --}}
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-procedures"></i>
+                                <p>
+                                    Kamar
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('rawat-inap') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Rawat Inap</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('infokamarinap') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Info Kamar Inap</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-boxes-stacked"></i>
+                                <p>
+                                    Inventaris
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('inventaris-barang') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Cetak Inventaris</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-microscope"></i>
+                                <p>Laboratorium
+                                <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('laboratorium') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Pemeriksaan LAB</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                       <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-fingerprint"></i>
+                                <p>
+                                    Biometrik
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('biometrik.rajal.index') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Biometrik Rajal</p>
+                                    </a>
+                                </li>
+                                {{-- kalau ada tambahan submenu, tinggal taruh di sini --}}
+                                <li class="nav-item">
+                                    <a href="{{ route('biometrik.ranap.index') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Biometrik Ranap</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('biometrik.rajal.listSuratRj') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>List Biometrik Rajal</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('biometrik.rajal.create') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Input SEP Biom Rajal</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('biometrik.ranap.listSuratRi') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>List Biometrik Ranap</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('biometrik.ranap.create') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Input SEP Biom Ranap</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
                         <li class="nav-item mt-5">
                         </li>
                         <li class="nav-item mt-5">
